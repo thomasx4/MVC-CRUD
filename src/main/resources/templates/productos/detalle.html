@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Producto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .info-row {
+            display: flex;
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            flex: 1;
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+        
+        .info-value {
+            flex: 2;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .total-value {
+            font-size: 1.3em;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-editar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-editar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-volver {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-volver:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .badge-bajo {
+            background-color: #ffc107;
+            color: #333;
+        }
+        
+        .badge-critico {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .badge-normal {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Detalle del Producto</h1>
+            <p>Información completa del producto</p>
+        </div>
+        
+        <div class="content">
+            <div class="info-card">
+                <div class="info-row">
+                    <div class="info-label">ID:</div>
+                    <div class="info-value" th:text="${producto.id}">1</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Nombre:</div>
+                    <div class="info-value" th:text="${producto.nombre}">Producto</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Precio Unitario:</div>
+                    <div class="info-value" th:text="'$' + ${#numbers.formatDecimal(producto.precio, 1, 2)}">$0.00</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Cantidad:</div>
+                    <div class="info-value">
+                        <span th:text="${producto.cantidad}">0</span>
+                        <span th:if="${producto.cantidad <= 5}" class="badge badge-critico" style="margin-left: 10px;">Stock Crítico</span>
+                        <span th:if="${producto.cantidad > 5 and producto.cantidad <= 10}" class="badge badge-bajo" style="margin-left: 10px;">Stock Bajo</span>
+                        <span th:if="${producto.cantidad > 10}" class="badge badge-normal" style="margin-left: 10px;">✓ Stock Suficiente</span>
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Valor Total:</div>
+                    <div class="info-value total-value" th:text="'$' + ${#numbers.formatDecimal(producto.precio * producto.cantidad, 1, 2)}">$0.00</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Fecha Creación:</div>
+                    <div class="info-value" th:text="${#temporals.format(producto.createdAt, 'dd/MM/yyyy HH:mm')}">-</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Última Actualización:</div>
+                    <div class="info-value" th:text="${#temporals.format(producto.updatedAt, 'dd/MM/yyyy HH:mm')}">-</div>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <a th:href="@{/productos/editar/{id}(id=${producto.id})}" class="btn btn-editar">Editar Producto</a>
+                <a href="/productos" class="btn btn-volver">← Volver a la Lista</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
